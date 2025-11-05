@@ -34,6 +34,8 @@ app.use(bodyParser.json());
 // Use routes as a module (see index.js)
 require('./routes')(app, router);
 
+app.use(require('./middleware/error'));
+
 // Start the server
 // app.listen(port);
 // console.log('Server running on port ' + port);
