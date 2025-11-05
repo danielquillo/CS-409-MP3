@@ -14,7 +14,7 @@ var app = express();
 var port = process.env.PORT || 3000;
 
 // Connect to a MongoDB --> Uncomment this once you have a connection string!!
-//mongoose.connect(process.env.MONGODB_URI,  { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI,  { useNewUrlParser: true });
 
 // Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function (req, res, next) {
@@ -34,18 +34,6 @@ app.use(bodyParser.json());
 // Use routes as a module (see index.js)
 require('./routes')(app, router);
 
-// Error handling middleware
-app.use(require('./middleware/error'));
-
-mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 })
-  .then(() => {
-    app.listen(port, () => console.log('Server running on port ' + port));
-  })
-  .catch(err => {
-    console.error('Mongo connection error:', err.message);
-    process.exit(1);
-  });
-
 // Start the server
-// app.listen(port);
-// console.log('Server running on port ' + port);
+app.listen(port);
+console.log('Server running on port ' + port);
