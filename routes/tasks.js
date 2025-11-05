@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET /tasks/:id (supports select)
+// GET /tasks/:id 
 router.get('/:id', async (req, res, next) => {
   try {
     const select = req.query.select ? JSON.parse(req.query.select) : undefined;
