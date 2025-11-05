@@ -3,6 +3,7 @@ const Task = require('../models/Task');
 const User = require('../models/user');
 const { buildQueryParams } = require('../utils/buildQuery');
 
+const toBool = v => (typeof v === 'string' ? v === 'true' : Boolean(v));
 const router = express.Router();
 const ok = (res, data, message = 'OK', status = 200) =>
   res.status(status).json({ message, data });
@@ -28,6 +29,7 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { name, description = '', deadline, completed = false, assignedUser = '', assignedUserName } = req.body || {};
+    const completedBool = toBool(completed);
     if (!name || !deadline) { const e = new Error('name and deadline are required'); e.status = 400; throw e; }
     let user = null;
     if (assignedUser) {
@@ -36,7 +38,7 @@ router.post('/', async (req, res, next) => {
     }
     const task = await Task.create({
       name, description, deadline,
-      completed: Boolean(completed),
+      completed: completedBool,
       assignedUser: user ? String(user._id) : '',
       assignedUserName: user ? user.name : (assignedUserName || 'unassigned'),
     });
@@ -68,6 +70,7 @@ router.get('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { name, description = '', deadline, completed = false, assignedUser = '', assignedUserName } = req.body || {};
+    const completedBool = toBool(completed);
     if (!name || !deadline) { const e = new Error('name and deadline are required'); e.status = 400; throw e; }
 
     const task = await Task.findById(req.params.id);
@@ -84,7 +87,7 @@ router.put('/:id', async (req, res, next) => {
     task.name = name;
     task.description = description;
     task.deadline = deadline;
-    task.completed = Boolean(completed);
+    task.completed = completedBool;
     task.assignedUser = newUser ? String(newUser._id) : '';
     task.assignedUserName = newUser ? newUser.name : (assignedUserName || 'unassigned');
     await task.save();
